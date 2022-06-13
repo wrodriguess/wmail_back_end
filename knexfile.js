@@ -11,11 +11,14 @@ module.exports = {
       database: 'wmail',
       user: 'postgres',
       password: 'postgres'
+    },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: `${__dirname}/src/database/migrations`
+    },
+    seeds: {
+      directory: `${__dirname}/src/database/seeds`
     }
-  },
-  migrations: {
-    tableName: 'knex_migrations',
-    directory: `${__dirname}/src/database/migrations`
   }
 
 };
