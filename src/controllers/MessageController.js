@@ -5,7 +5,12 @@ module.exports = {
     async inbox(req, res, next){
         try{
             const {id_recipient} = req.params
-            const results = await knex('messages').where({id_recipient}).andWhere({spam: false}).andWhere({deleted_at: null})
+            const results = await knex('messages')
+                                    .select('messages.*', 'users.name')
+                                    .join('users', 'users.id', '=', 'messages.id_sender')
+                                    .where({id_recipient})
+                                    .andWhere({spam: false})
+                                    .andWhere({'messages.deleted_at': null})
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -15,7 +20,13 @@ module.exports = {
     async important(req, res, next){
         try{
             const {id_recipient} = req.params
-            const results = await knex('messages').where({id_recipient}).andWhere({important: true}).andWhere({spam: false}).andWhere({deleted_at: null})
+            const results = await knex('messages')
+                                    .select('messages.*', 'users.name')
+                                    .join('users', 'users.id', '=', 'messages.id_sender')
+                                    .where({id_recipient})
+                                    .andWhere({important: true})
+                                    .andWhere({spam: false})
+                                    .andWhere({'messages.deleted_at': null})
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -25,7 +36,10 @@ module.exports = {
     async sent(req, res, next){
         try{
             const {id_sender} = req.params
-            const results = await knex('messages').where({id_sender})
+            const results = await knex('messages')
+                                    .select('messages.*', 'users.name')
+                                    .join('users', 'users.id', '=', 'messages.id_recipient')
+                                    .where({id_sender})
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -35,7 +49,10 @@ module.exports = {
     async trash(req, res, next){
         try{
             const {id_recipient} = req.params
-            const results = await knex('messages').whereNotNull('deleted_at').andWhere({id_recipient})
+            const results = await knex('messages')
+                                    .select('messages.*', 'users.name')
+                                    .join('users', 'users.id', '=', 'messages.id_sender')
+                                    .whereNotNull('messages.deleted_at').andWhere({id_recipient})
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -81,7 +98,10 @@ module.exports = {
     async spam(req, res, next){
         try{
             const {id_recipient} = req.params
-            const results = await knex('messages').where({id_recipient}).andWhere({spam: true})
+            const results = await knex('messages')
+                                    .select('messages.*', 'users.name')
+                                    .join('users', 'users.id', '=', 'messages.id_sender')
+                                    .where({id_recipient}).andWhere({spam: true})
             return res.status(200).json(results)
         }catch(error){
             next(error)
