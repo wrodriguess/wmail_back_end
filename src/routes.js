@@ -18,6 +18,7 @@ routes.put('/users/disable/:id', UserController.disable)
 // Messages
 routes.get('/messages/inbox/:id_recipient', MessageController.inbox)
 routes.get('/messages/important/:id_recipient', MessageController.important)
+routes.put('/messages/important/:id/:important', MessageController.toggleImportant)
 routes.get('/messages/sent/:id_sender', MessageController.sent)
 routes.get('/messages/trash/:id_recipient', MessageController.trash)
 routes.post('/messages/compose/:id_sender', MessageController.compose)

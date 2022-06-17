@@ -110,6 +110,17 @@ module.exports = {
         }
     },
 
+    async toggleImportant(req, res, next){
+        try{
+            const {id, important} = req.params
+            const result = await knex('messages').update({important}).where({id})
+            
+            return res.status(200).json(result)
+        }catch(error){
+            next(error)
+        }
+    },
+
     async spam(req, res, next){
         try{
             const {id_recipient} = req.params
