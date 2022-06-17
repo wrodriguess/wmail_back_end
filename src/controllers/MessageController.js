@@ -11,6 +11,7 @@ module.exports = {
                                     .where({id_recipient})
                                     .andWhere({spam: false})
                                     .andWhere({'messages.deleted_at': null})
+                                    .orderBy('messages.created_at', 'desc')
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -27,6 +28,7 @@ module.exports = {
                                     .andWhere({important: true})
                                     .andWhere({spam: false})
                                     .andWhere({'messages.deleted_at': null})
+                                    .orderBy('messages.created_at', 'desc')
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -40,6 +42,7 @@ module.exports = {
                                     .select('messages.*', 'users.name')
                                     .join('users', 'users.id', '=', 'messages.id_recipient')
                                     .where({id_sender})
+                                    .orderBy('messages.created_at', 'desc')
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -53,6 +56,7 @@ module.exports = {
                                     .select('messages.*', 'users.name')
                                     .join('users', 'users.id', '=', 'messages.id_sender')
                                     .whereNotNull('messages.deleted_at').andWhere({id_recipient})
+                                    .orderBy('messages.created_at', 'desc')
             return res.status(200).json(results)
         }catch(error){
             next(error)
@@ -95,13 +99,27 @@ module.exports = {
         }
     },
 
+    async toggleVisualized(req, res, next){
+        try{
+            const {id, visualized} = req.params
+            const result = await knex('messages').update({visualized}).where({id})
+            
+            return res.status(200).json(result)
+        }catch(error){
+            next(error)
+        }
+    },
+
     async spam(req, res, next){
         try{
             const {id_recipient} = req.params
             const results = await knex('messages')
                                     .select('messages.*', 'users.name')
                                     .join('users', 'users.id', '=', 'messages.id_sender')
-                                    .where({id_recipient}).andWhere({spam: true})
+                                    .where({id_recipient})
+                                    .andWhere({spam: true})
+                                    .andWhere({'messages.deleted_at': null})
+                                    .orderBy('messages.created_at', 'desc')
             return res.status(200).json(results)
         }catch(error){
             next(error)

@@ -2,6 +2,22 @@ const knex = require('../database')
 
 module.exports = {
 
+    async login(req, res, next){
+        try{
+            const {email, password} = req.body
+            const [result] = await knex('users').select('id').where({email}).andWhere({password})
+        
+            if(result){
+                return res.status(200).json(result)
+            }else{
+                return res.status(404).json({error: 'E-mail ou senha incorreto(s)'})
+            }
+            
+        }catch(error){
+            next(error)
+        }
+    },
+
     async create(req, res, next){
         try{
             const {name, email, password} = req.body
